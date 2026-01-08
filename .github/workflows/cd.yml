@@ -13,6 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Use SSH key
+        runs: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          sudo chmod 600 ~/.ssh/id_rsa
+
+      - name: Git config
+        run: |
+          git config --global user.name "cd-user"
+          git config --global user.email "cd-user@my-app.com"
+
       - name: Install dependencies
         run: npm ci
 
@@ -20,4 +31,4 @@ jobs:
         run: npm run build
 
       - name: Deploy to Production
-        run: npm run deploy
+        run: npm run deploy -- -r git@github.com:PatriNad95/auto-deploy-git.git
